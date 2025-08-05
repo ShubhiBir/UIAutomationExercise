@@ -12,7 +12,7 @@ Maven is used for dependency management and build automation.
 - Select the first item from the search results and open it
 - Add the item to the cart
 - Verify the cart count and confirmation messages
-- Close confirmation popups gracefully
+- Close confirmation popup
 
 ## Technologies Used
 
