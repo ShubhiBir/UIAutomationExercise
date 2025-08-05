@@ -28,3 +28,13 @@ Maven is used for dependency management and build automation.
 - Maven installed
 - ChromeDriver or other WebDriver executable added to system PATH
 - Internet connection to access eBay website
+
+## Sample Report
+
+<img width="1439" height="665" alt="image" src="https://github.com/user-attachments/assets/524b107a-8dbc-4a4a-b615-75e91bcae4b8" />
+
+
+## Project Structure
+
+<img width="1439" height="743" alt="image" src="https://github.com/user-attachments/assets/0bb893da-c68c-4e8a-af1a-0a91804901ef" />
+
