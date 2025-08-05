@@ -12,19 +12,19 @@ import java.time.Duration;
 import java.util.List;
 
 public class EBayHomePage extends Page {
+    private WebDriverWait wait;
 
-    public EBayHomePage(WebDriver driver){
+    public EBayHomePage(WebDriver driver) {
         super(driver);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         System.out.println("Home Page title is: " + driver.getTitle());
     }
 
-
     @FindBy(css = "#gh-ac")
-    private  WebElement searchBox;
+    private WebElement searchBox;
 
-    @FindBy(css = "#srp-river-results > ul > li a[href]")
+    @FindBy(css = "#srp-river-results > ul > li")
     private List<WebElement> searchList;
-
 
     public void searchItem(String searchItem) {
         searchBox.click();
@@ -32,26 +32,28 @@ public class EBayHomePage extends Page {
         searchBox.sendKeys(searchItem + Keys.ENTER);
     }
 
-
     public boolean isListVisible() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("srp-river-results")));
-      return !searchList.isEmpty();
+        return !searchList.isEmpty();
     }
 
     public int getItemsCount() {
-       return searchList.size();
+        return searchList.size();
     }
 
     public void selectFirstItemAndSwitchWindow() {
-String originalWindow = driver.getWindowHandle();
-        if(!searchList.isEmpty()){
-            searchList.get(0).click();
+        String originalWindow = driver.getWindowHandle();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("srp-river-results")));
+        WebElement firstItem = searchList.get(0).findElement(By.cssSelector("a[href]"));
+        wait.until(ExpectedConditions.visibilityOf(firstItem));
+        wait.until(ExpectedConditions.elementToBeClickable(firstItem));
+        if (!searchList.isEmpty() && firstItem.isDisplayed()) {
+            firstItem.click();
         } else throw new IllegalStateException("No search results found to click.");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
         wait.until(driver -> driver.getWindowHandles().size() > 1);
-        for(String windowHandle : driver.getWindowHandles()){
-            if(!windowHandle.equals(originalWindow)){
+        for (String windowHandle : driver.getWindowHandles()) {
+            if (!windowHandle.equals(originalWindow)) {
                 driver.switchTo().window(windowHandle);
                 break;
             }
