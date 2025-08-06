@@ -1,9 +1,6 @@
 package pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,7 +13,7 @@ public class EBayHomePage extends Page {
 
     public EBayHomePage(WebDriver driver) {
         super(driver);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         System.out.println("Home Page title is: " + driver.getTitle());
     }
 
@@ -44,13 +41,23 @@ public class EBayHomePage extends Page {
     public void selectFirstItemAndSwitchWindow() {
         String originalWindow = driver.getWindowHandle();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("srp-river-results")));
+        wait.until(driver -> {
+            try {
+                WebElement firstItem = searchList.get(0).findElement(By.cssSelector("a[href]"));
+                return firstItem.isDisplayed() &&
+                        firstItem.getSize().height > 0 &&
+                        firstItem.getSize().width > 0;
+            } catch (Exception e) {
+                return false;
+            }
+        });
         WebElement firstItem = searchList.get(0).findElement(By.cssSelector("a[href]"));
-        wait.until(ExpectedConditions.visibilityOf(firstItem));
-        wait.until(ExpectedConditions.elementToBeClickable(firstItem));
-        if (!searchList.isEmpty() && firstItem.isDisplayed()) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", firstItem);
+        try {
             firstItem.click();
-        } else throw new IllegalStateException("No search results found to click.");
-
+        } catch (ElementClickInterceptedException e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", firstItem);
+        }
         wait.until(driver -> driver.getWindowHandles().size() > 1);
         for (String windowHandle : driver.getWindowHandles()) {
             if (!windowHandle.equals(originalWindow)) {

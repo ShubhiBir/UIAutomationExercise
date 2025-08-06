@@ -34,7 +34,7 @@ public class HomePageStepDef {
      */
     @When("the user navigates to the website {string}")
     public void theUserNavigatesToTheEbayCom(String url) {
-        driver.get(url);
+        driver.navigate().to(url);
     }
 
     /**
